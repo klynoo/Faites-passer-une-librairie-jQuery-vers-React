@@ -2,116 +2,35 @@ import React from "react";
 import styled from "styled-components";
 import useEmployeeListLogic, { SortCriteria } from "./EmployeeListLogic";
 
-// Container principal
-const Container = styled.div`
-  padding: 20px;
-  font-family: "Arial", sans-serif;
-  background-color: #f9f9f9;
-  min-height: 100vh;
-`;
-
-// Titre de la page
-const Title = styled.h1`
-  text-align: center;
-  color: #333;
-  margin-bottom: 30px;
-`;
-
-// Conteneur de la barre de recherche
-const SearchContainer = styled.div`
-  margin-bottom: 20px;
-`;
-
-// Barre de recherche stylisée
-const SearchInput = styled.input`
-  width: 100%;
-  padding: 10px;
-  font-size: 16px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  transition: border 0.2s;
-  &:focus {
-    outline: none;
-    border-color: #007bff;
-  }
-`;
-
-// Conteneur pour les boutons de tri
-const ButtonContainer = styled.div`
-  margin-bottom: 20px;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  justify-content: center;
-`;
-
-// Bouton de tri stylisé
-const SortButtonStyled = styled.button`
-  padding: 10px 15px;
-  background-color: #007bff;
-  color: #fff;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 14px;
-  transition: background-color 0.2s;
-
-  &:hover {
-    background-color: #0056b3;
-  }
-`;
-
-// Message lorsqu'aucun employé n'est trouvé
-const NoEmployeeMessage = styled.p`
-  text-align: center;
-  color: #666;
-  font-style: italic;
-`;
-
-// Tableau stylisé
-const Table = styled.table`
-  width: 100%;
-  border-collapse: collapse;
-  background-color: #fff;
-`;
-
-// En-tête du tableau
-const TableHeader = styled.th`
-  border: 1px solid #ddd;
-  padding: 12px;
-  background-color: #f2f2f2;
-  text-align: left;
-`;
-
-// Cellule du tableau
-const TableCell = styled.td`
-  border: 1px solid #ddd;
-  padding: 12px;
-  text-align: left;
-`;
-
-// Pour les contrôles de pagination
-const PaginationControls = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-top: 20px;
-  gap: 10px;
-`;
-
+// SORT BUTTON COMPONENT
 interface SortButtonProps {
   sortBy: SortCriteria;
   label: string;
   onClick: (sortBy: SortCriteria) => void;
+  currentSort: SortCriteria;
+  sortOrder: "asc" | "desc";
 }
 
-const SortButton: React.FC<SortButtonProps> = ({ sortBy, label, onClick }) => (
-  <SortButtonStyled onClick={() => onClick(sortBy)}>{label}</SortButtonStyled>
-);
+const SortButton: React.FC<SortButtonProps> = ({
+  sortBy,
+  onClick,
+  currentSort,
+  sortOrder,
+}) => {
+  const isActive = currentSort === sortBy;
 
+  return (
+    <SortButtonContainer onClick={() => onClick(sortBy)}>
+      <SortArrow active={isActive && sortOrder === "asc"}>▲</SortArrow>
+      <SortArrow active={isActive && sortOrder === "desc"}>▼</SortArrow>
+    </SortButtonContainer>
+  );
+};
+
+// MAIN COMPONENT
 const EmployeeList: React.FC = () => {
   const {
-    employees, // Les 5 employés de la page, triés
+    employees,
     handleSortChange,
     searchTerm,
     setSearchTerm,
@@ -119,6 +38,8 @@ const EmployeeList: React.FC = () => {
     totalPages,
     goToNextPage,
     goToPrevPage,
+    currentSort,
+    sortOrder,
   } = useEmployeeListLogic();
 
   return (
@@ -135,61 +56,121 @@ const EmployeeList: React.FC = () => {
         />
       </SearchContainer>
 
-      {/* Boutons pour trier par critère */}
-      <ButtonContainer>
-        <SortButton
-          sortBy="firstName"
-          label="Sort by First Name"
-          onClick={handleSortChange}
-        />
-        <SortButton
-          sortBy="lastName"
-          label="Sort by Last Name"
-          onClick={handleSortChange}
-        />
-        <SortButton
-          sortBy="startDate"
-          label="Sort by Start Date"
-          onClick={handleSortChange}
-        />
-        <SortButton
-          sortBy="street"
-          label="Sort by Street"
-          onClick={handleSortChange}
-        />
-        <SortButton
-          sortBy="city"
-          label="Sort by City"
-          onClick={handleSortChange}
-        />
-        <SortButton
-          sortBy="state"
-          label="Sort by State"
-          onClick={handleSortChange}
-        />
-        <SortButton
-          sortBy="zipCode"
-          label="Sort by Zip Code"
-          onClick={handleSortChange}
-        />
-      </ButtonContainer>
-
-      {/* Affichage du tableau */}
       {employees.length === 0 ? (
         <NoEmployeeMessage>No employees found.</NoEmployeeMessage>
       ) : (
         <Table>
           <thead>
             <tr>
-              <TableHeader>First Name</TableHeader>
-              <TableHeader>Last Name</TableHeader>
-              <TableHeader>Start Date</TableHeader>
-              <TableHeader>Department</TableHeader>
-              <TableHeader>Date of Birth</TableHeader>
-              <TableHeader>Street</TableHeader>
-              <TableHeader>City</TableHeader>
-              <TableHeader>State</TableHeader>
-              <TableHeader>Zip Code</TableHeader>
+              <TableHeader>
+                <FlexContainer>
+                  First Name
+                  <SortButton
+                    sortBy="firstName"
+                    label=""
+                    onClick={handleSortChange}
+                    currentSort={currentSort}
+                    sortOrder={sortOrder}
+                  />
+                </FlexContainer>
+              </TableHeader>
+
+              <TableHeader>
+                <FlexContainer>
+                  Last Name
+                  <SortButton
+                    sortBy="lastName"
+                    label=""
+                    onClick={handleSortChange}
+                    currentSort={currentSort}
+                    sortOrder={sortOrder}
+                  />
+                </FlexContainer>
+              </TableHeader>
+              <TableHeader>
+                <FlexContainer>
+                  Start Date
+                  <SortButton
+                    sortBy="startDate"
+                    label=""
+                    onClick={handleSortChange}
+                    currentSort={currentSort}
+                    sortOrder={sortOrder}
+                  />
+                </FlexContainer>
+              </TableHeader>
+              <TableHeader>
+                <FlexContainer>
+                  Department
+                  <SortButton
+                    sortBy="department"
+                    label=""
+                    onClick={handleSortChange}
+                    currentSort={currentSort}
+                    sortOrder={sortOrder}
+                  />
+                </FlexContainer>
+              </TableHeader>
+              <TableHeader>
+                <FlexContainer>
+                  Date of Birth
+                  <SortButton
+                    sortBy="dateOfBirth"
+                    label=""
+                    onClick={handleSortChange}
+                    currentSort={currentSort}
+                    sortOrder={sortOrder}
+                  />
+                </FlexContainer>
+              </TableHeader>
+              <TableHeader>
+                <FlexContainer>
+                  Street
+                  <SortButton
+                    sortBy="street"
+                    label=""
+                    onClick={handleSortChange}
+                    currentSort={currentSort}
+                    sortOrder={sortOrder}
+                  />
+                </FlexContainer>
+              </TableHeader>
+              <TableHeader>
+                <FlexContainer>
+                  City
+                  <SortButton
+                    sortBy="city"
+                    label=""
+                    onClick={handleSortChange}
+                    currentSort={currentSort}
+                    sortOrder={sortOrder}
+                  />
+                </FlexContainer>
+              </TableHeader>
+              <TableHeader>
+                <FlexContainer>
+                  State
+                  <SortButton
+                    sortBy="state"
+                    label=""
+                    onClick={handleSortChange}
+                    currentSort={currentSort}
+                    sortOrder={sortOrder}
+                  />
+                </FlexContainer>
+              </TableHeader>
+              <TableHeader>
+                <FlexContainer>
+                  Zip Code
+                  <SortButton
+                    sortBy="zipCode"
+                    label=""
+                    onClick={handleSortChange}
+                    currentSort={currentSort}
+                    sortOrder={sortOrder}
+                  />
+                </FlexContainer>
+              </TableHeader>
             </tr>
           </thead>
           <tbody>
@@ -213,15 +194,18 @@ const EmployeeList: React.FC = () => {
       {/* Contrôles de pagination */}
       {totalPages > 1 && (
         <PaginationControls>
-          <button onClick={goToPrevPage} disabled={currentPage === 1}>
-            Prev
-          </button>
-          <span>
+          <PageButton onClick={goToPrevPage} disabled={currentPage === 1}>
+            « Prev
+          </PageButton>
+          <PageInfo>
             Page {currentPage} / {totalPages}
-          </span>
-          <button onClick={goToNextPage} disabled={currentPage === totalPages}>
-            Next
-          </button>
+          </PageInfo>
+          <PageButton
+            onClick={goToNextPage}
+            disabled={currentPage === totalPages}
+          >
+            Next »
+          </PageButton>
         </PaginationControls>
       )}
     </Container>
@@ -229,3 +213,122 @@ const EmployeeList: React.FC = () => {
 };
 
 export default EmployeeList;
+
+const Container = styled.div`
+  padding: 20px;
+  font-family: "Roboto", sans-serif;
+  background: linear-gradient(120deg, #f0f0f0, #fafafa);
+  min-height: 100vh;
+`;
+
+const Title = styled.h1`
+  text-align: center;
+  color: #333;
+  margin-bottom: 30px;
+  letter-spacing: 1px;
+`;
+
+const SearchContainer = styled.div`
+  margin: 0 auto 30px;
+  max-width: 400px;
+  width: 100%;
+`;
+
+const SearchInput = styled.input`
+  width: 100%;
+  padding: 12px 15px;
+  font-size: 16px;
+  border: 2px solid #ddd;
+  border-radius: 8px;
+  transition: border-color 0.2s;
+  &:focus {
+    outline: none;
+    border-color: #3498db;
+  }
+`;
+
+const SortButtonContainer = styled.div`
+  display: flex;
+  flex-direction: column; /* Superpose les flèches */
+  align-items: center;
+  cursor: pointer;
+  padding: 4px;
+`;
+
+const SortArrow = styled.span<{ active: boolean }>`
+  font-size: 12px;
+  color: ${({ active }) =>
+    active ? "#000" : "#ccc"}; /* Gris clair par défaut */
+  transition: color 0.2s ease;
+
+  &:hover {
+    color: #000; /* Assombrit la flèche au survol */
+  }
+`;
+
+const NoEmployeeMessage = styled.p`
+  text-align: center;
+  color: #666;
+  font-style: italic;
+  margin-top: 40px;
+`;
+
+const Table = styled.table`
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  background-color: #fff;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+`;
+
+const TableHeader = styled.th`
+  border-bottom: 2px solid #ddd;
+  padding: 14px 16px;
+  background-color: #f8f8f8;
+  text-align: left;
+  font-weight: 600;
+  position: relative;
+`;
+
+const FlexContainer = styled.div`
+  display: flex;
+  align-items: center; /* Aligner verticalement le texte et les flèches */
+  gap: 8px; /* Espacement entre le texte et les flèches */
+`;
+
+const TableCell = styled.td`
+  border-bottom: 1px solid #eee;
+  padding: 12px 16px;
+  text-align: left;
+  vertical-align: middle;
+`;
+
+const PaginationControls = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 30px;
+  gap: 20px;
+`;
+
+const PageButton = styled.button<{ disabled?: boolean }>`
+  padding: 10px 15px;
+  font-size: 14px;
+  border-radius: 6px;
+  border: none;
+  background-color: ${({ disabled }) => (disabled ? "#ccc" : "#3498db")};
+  color: #fff;
+  cursor: ${({ disabled }) => (disabled ? "not-allowed" : "pointer")};
+  transition: background-color 0.2s;
+
+  &:hover {
+    background-color: ${({ disabled }) => (disabled ? "#ccc" : "#2980b9")};
+  }
+`;
+
+const PageInfo = styled.span`
+  font-size: 14px;
+  color: #555;
+`;

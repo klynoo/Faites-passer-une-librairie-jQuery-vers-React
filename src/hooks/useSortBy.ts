@@ -33,7 +33,6 @@ export default function useSortBy(employees: Employee[]) {
   const [isAscending, setIsAscending] = useState(true);
   const [sortByField, setSortByField] = useState<keyof Employee | null>(null);
 
-  // Tri mémorisé : uniquement sur le tableau qu'on nous a passé
   const sortedEmployees = useMemo(() => {
     if (!sortByField) return employees;
 
@@ -49,10 +48,6 @@ export default function useSortBy(employees: Employee[]) {
     );
   }, [employees, isAscending, sortByField]);
 
-  /**
-   * Toggle : si on reclique sur la même colonne, on inverse l'ordre (ASC <-> DESC).
-   * Sinon, on set un nouveau champ de tri et on repasse en ascendant.
-   */
   const toggleSort = (field: keyof Employee) => {
     if (field === sortByField) {
       setIsAscending((prev) => !prev);
