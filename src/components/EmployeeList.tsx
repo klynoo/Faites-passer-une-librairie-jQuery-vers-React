@@ -1,13 +1,14 @@
 import React from "react";
 import styled from "styled-components";
-import useEmployeeListLogic, { SortCriteria } from "./EmployeeListLogic";
+import useEmployeeListLogic from "./EmployeeListLogic";
+import { SortCriteria } from "../hooks/useSortBy";
+import Dropdown from "./Dropdown";
 
-// SORT BUTTON COMPONENT
 interface SortButtonProps {
   sortBy: SortCriteria;
   label: string;
   onClick: (sortBy: SortCriteria) => void;
-  currentSort: SortCriteria;
+  currentSort: SortCriteria | null;
   sortOrder: "asc" | "desc";
 }
 
@@ -18,7 +19,6 @@ const SortButton: React.FC<SortButtonProps> = ({
   sortOrder,
 }) => {
   const isActive = currentSort === sortBy;
-
   return (
     <SortButtonContainer onClick={() => onClick(sortBy)}>
       <SortArrow active={isActive && sortOrder === "asc"}>▲</SortArrow>
@@ -27,35 +27,54 @@ const SortButton: React.FC<SortButtonProps> = ({
   );
 };
 
-// MAIN COMPONENT
 const EmployeeList: React.FC = () => {
   const {
     employees,
     handleSortChange,
     searchTerm,
     setSearchTerm,
+    itemsPerPage,
+    setItemsPerPage,
     currentPage,
     totalPages,
     goToNextPage,
     goToPrevPage,
     currentSort,
     sortOrder,
+    firstItemIndex,
+    lastItemIndex,
+    totalEmployees,
   } = useEmployeeListLogic();
 
   return (
     <Container>
       <Title>Employee List</Title>
+      <FiltersContainer>
+        <ItemsPerPageContainer>
+          <Dropdown
+            label="Items par page"
+            options={[
+              { label: "5", value: "5" },
+              { label: "10", value: "10" },
+              { label: "15", value: "15" },
+              { label: "20", value: "20" },
+            ]}
+            selectedValue={String(itemsPerPage)}
+            onSelect={(value) => setItemsPerPage(Number(value))}
+          />
+        </ItemsPerPageContainer>
+        {/* Barre de recherche */}
+        <SearchContainer>
+          <SearchInput
+            type="text"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            placeholder="Search employees..."
+          />
+        </SearchContainer>
 
-      {/* Barre de recherche */}
-      <SearchContainer>
-        <SearchInput
-          type="text"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          placeholder="Search employees..."
-        />
-      </SearchContainer>
-
+        {/* Sélecteur du nombre d’items par page */}
+      </FiltersContainer>
       {employees.length === 0 ? (
         <NoEmployeeMessage>No employees found.</NoEmployeeMessage>
       ) : (
@@ -208,6 +227,17 @@ const EmployeeList: React.FC = () => {
           </PageButton>
         </PaginationControls>
       )}
+      {/* Affichage de x à x sur x entrées */}
+      <EntriesInfo>
+        {totalEmployees > 0 ? (
+          <>
+            Affichage de {firstItemIndex} à {lastItemIndex} sur {totalEmployees}{" "}
+            entrées
+          </>
+        ) : (
+          <>Aucune entrée à afficher.</>
+        )}
+      </EntriesInfo>
     </Container>
   );
 };
@@ -226,6 +256,11 @@ const Title = styled.h1`
   color: #333;
   margin-bottom: 30px;
   letter-spacing: 1px;
+`;
+
+const FiltersContainer = styled.div`
+  display: flex;
+  justify-content: space-between;
 `;
 
 const SearchContainer = styled.div`
@@ -247,6 +282,21 @@ const SearchInput = styled.input`
   }
 `;
 
+const ItemsPerPageContainer = styled.div`
+  margin: 0 auto 20px;
+  max-width: 200px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+`;
+
+const EntriesInfo = styled.div`
+  text-align: center;
+  margin-bottom: 20px;
+  font-size: 14px;
+  color: #555;
+`;
+
 const SortButtonContainer = styled.div`
   display: flex;
   flex-direction: column; /* Superpose les flèches */
@@ -257,12 +307,10 @@ const SortButtonContainer = styled.div`
 
 const SortArrow = styled.span<{ active: boolean }>`
   font-size: 12px;
-  color: ${({ active }) =>
-    active ? "#000" : "#ccc"}; /* Gris clair par défaut */
+  color: ${({ active }) => (active ? "#000" : "#ccc")};
   transition: color 0.2s ease;
-
   &:hover {
-    color: #000; /* Assombrit la flèche au survol */
+    color: #000;
   }
 `;
 
@@ -294,8 +342,8 @@ const TableHeader = styled.th`
 
 const FlexContainer = styled.div`
   display: flex;
-  align-items: center; /* Aligner verticalement le texte et les flèches */
-  gap: 8px; /* Espacement entre le texte et les flèches */
+  align-items: center;
+  gap: 8px;
 `;
 
 const TableCell = styled.td`

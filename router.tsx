@@ -16,7 +16,6 @@ export const router = createBrowserRouter([
         path: "",
         element: (
           <>
-            <div>coucou</div>
             <Form />
           </>
         ),

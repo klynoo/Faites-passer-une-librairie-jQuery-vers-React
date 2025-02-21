@@ -1,6 +1,8 @@
 import { useState, useMemo } from "react";
 import { Employee } from "../components/Store";
 
+export type SortCriteria = keyof Employee;
+
 const compareFunctions = {
   string: function (field: keyof Employee, isAscending: boolean) {
     return function (a: Employee, b: Employee) {
@@ -31,25 +33,25 @@ const compareFunctions = {
  */
 export default function useSortBy(employees: Employee[]) {
   const [isAscending, setIsAscending] = useState(true);
-  const [sortByField, setSortByField] = useState<keyof Employee | null>(null);
+  const [currentSort, setSortByField] = useState<keyof Employee | null>(null);
 
   const sortedEmployees = useMemo(() => {
-    if (!sortByField) return employees;
+    if (!currentSort) return employees;
 
     let compareStrategy: "string" | "date" | "number" = "string";
-    if (["startDate", "birthDate", "dateOfBirth"].includes(sortByField)) {
+    if (["startDate", "birthDate", "dateOfBirth"].includes(currentSort)) {
       compareStrategy = "date";
-    } else if (sortByField === "zipCode") {
+    } else if (currentSort === "zipCode") {
       compareStrategy = "number";
     }
 
     return [...employees].sort(
-      compareFunctions[compareStrategy](sortByField, isAscending)
+      compareFunctions[compareStrategy](currentSort, isAscending)
     );
-  }, [employees, isAscending, sortByField]);
+  }, [employees, isAscending, currentSort]);
 
   const toggleSort = (field: keyof Employee) => {
-    if (field === sortByField) {
+    if (field === currentSort) {
       setIsAscending((prev) => !prev);
     } else {
       setSortByField(field);
@@ -61,6 +63,6 @@ export default function useSortBy(employees: Employee[]) {
     sortedEmployees,
     toggleSort,
     isAscending,
-    sortByField,
+    currentSort,
   };
 }
