@@ -1,7 +1,7 @@
 import { createBrowserRouter, Outlet } from "react-router-dom";
-import Header from "./src/components/Header";
-import Form from "./src/components/form/Form";
-import EmployeeList from "./src/components/EmployeeList";
+import Header from "../components/layout/Header";
+import Form from "../components/form/Form";
+import EmployeeList from "../components/EmployeeList/EmployeeList";
 
 export const router = createBrowserRouter([
   {

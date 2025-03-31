@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import mockEmployees from "./mocks/usersMock";
+import mockEmployees from "../components/mocks/usersMock";
 
 export interface Employee {
   firstName: string;

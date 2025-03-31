@@ -1,7 +1,7 @@
-import usePagination from "../hooks/usePagination";
-import useSearch from "../hooks/useSearch";
-import useSortBy from "../hooks/useSortBy";
-import useEmployeeStore from "./Store";
+import useSearch from "../../hooks/useSearch";
+import usePagination from "../../hooks/usePagination";
+import useSortBy from "../../hooks/useSortBy";
+import useEmployeeStore from "../../store/Store";
 
 function useEmployeeListLogic() {
   const employeesFromStore = useEmployeeStore((state) => state.employees);

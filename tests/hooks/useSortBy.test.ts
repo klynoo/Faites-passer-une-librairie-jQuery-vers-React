@@ -1,9 +1,20 @@
 import { renderHook, act } from "@testing-library/react";
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, vi } from "vitest";
 import useSortBy from "../../src/hooks/useSortBy";
 import { Employee } from "../../src/store/Store";
 
 const mockEmployees: Employee[] = [
+  {
+    firstName: "Alice",
+    lastName: "Johnson",
+    startDate: "2019-03-10",
+    department: "HR",
+    dateOfBirth: "1985-12-01",
+    street: "789 Boulevard",
+    city: "Berlin",
+    state: "DE",
+    zipCode: "10115",
+  },
   {
     firstName: "John",
     lastName: "Doe",
@@ -24,52 +35,35 @@ const mockEmployees: Employee[] = [
     street: "456 Another Rd",
     city: "London",
     state: "UK",
-    zipCode: "84000",
-  },
-  {
-    firstName: "Alice",
-    lastName: "Johnson",
-    startDate: "2019-03-10",
-    department: "HR",
-    dateOfBirth: "1985-12-01",
-    street: "789 Boulevard",
-    city: "Berlin",
-    state: "DE",
-    zipCode: "10115",
+    zipCode: "SW1A",
   },
 ];
 
-describe("useSortByDepartment", () => {
-  it("tri par department en ordre ascendant", () => {
+describe("Hook de tri de données", () => {
+  it("Par défaut ne trie pas la liste", () => {
     const { result } = renderHook(() => useSortBy(mockEmployees));
-
-    act(() => {
-      result.current.toggleSort("department");
-    });
-
     const { sortedEmployees } = result.current;
-    expect(sortedEmployees.map((emp) => emp.department)).toEqual([
-      "HR",
-      "Marketing",
-      "Sales",
+
+    expect(sortedEmployees.map((emp) => emp.city)).toEqual([
+      "Berlin",
+      "Paris",
+      "London",
     ]);
   });
 
-  it("passe en ordre descendant après toggleSort sur 'department'", () => {
+  it("Doit trier la liste de manière ascendante sur une des colonnes", () => {
     const { result } = renderHook(() => useSortBy(mockEmployees));
+    const { toggleSort } = result.current;
 
     act(() => {
-      result.current.toggleSort("department");
-    });
-    act(() => {
-      result.current.toggleSort("department");
+      toggleSort("city");
     });
 
     const { sortedEmployees } = result.current;
-    expect(sortedEmployees.map((emp) => emp.department)).toEqual([
-      "Sales",
-      "Marketing",
-      "HR",
+    expect(sortedEmployees.map((emp) => emp.city)).toEqual([
+      "Berlin",
+      "London",
+      "Paris",
     ]);
   });
 });

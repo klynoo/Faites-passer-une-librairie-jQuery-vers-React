@@ -1,5 +1,5 @@
 import { useState, useMemo } from "react";
-import { Employee } from "../components/Store";
+import { Employee } from "../store/Store";
 
 export type SortCriteria = keyof Employee;
 
@@ -50,7 +50,7 @@ export default function useSortBy(employees: Employee[]) {
     );
   }, [employees, isAscending, currentSort]);
 
-  const toggleSort = (field: keyof Employee) => {
+  const toggleSort = (field: keyof Employee | null = null) => {
     if (field === currentSort) {
       setIsAscending((prev) => !prev);
     } else {

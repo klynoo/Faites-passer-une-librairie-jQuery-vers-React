@@ -1,13 +1,13 @@
-import React from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
-import Dropdown from "../Dropdown";
+import Dropdown from "npm-bk";
 import COUNTRIES from "../../constants/countries";
 import DEPARTEMENTS from "../../constants/departements";
 import { useFormLogic, FormInputs } from "./useFormLogic";
-import useEmployeeStore from "../Store";
+import useEmployeeStore from "../../store/Store";
 
 interface InputFieldProps {
   label: string;
@@ -41,6 +41,8 @@ const InputField: React.FC<InputFieldProps> = ({
 );
 
 const Form: React.FC = () => {
+  const [success, setSuccess] = useState<boolean>(false);
+
   const {
     formData,
     date,
@@ -76,6 +78,9 @@ const Form: React.FC = () => {
 
     addEmployee(newEmployee);
     console.log("Employé ajouté :", newEmployee);
+    setSuccess(true);
+
+    setTimeout(() => setSuccess(false), 3000);
   };
 
   return (
@@ -173,6 +178,10 @@ const Form: React.FC = () => {
         </FieldContainer>
 
         <SubmitButton type="submit">S'inscrire</SubmitButton>
+
+        {success && (
+          <SuccessMessage>Employé ajouté avec succès !</SuccessMessage>
+        )}
       </FormContainer>
     </PageBackground>
   );
@@ -273,4 +282,16 @@ const SubmitButton = styled.button`
     transform: translateY(0);
     box-shadow: none;
   }
+`;
+
+const SuccessMessage = styled.div`
+  margin-top: 20px;
+  padding: 12px 20px;
+  text-align: center;
+  font-family: "Roboto", sans-serif;
+  font-size: 16px;
+  color: #155724;
+  background-color: #d4edda;
+  border: 1px solid #c3e6cb;
+  border-radius: 6px;
 `;

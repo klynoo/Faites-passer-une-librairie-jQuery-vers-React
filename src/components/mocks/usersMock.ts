@@ -1,4 +1,4 @@
-import { Employee } from "../Store";
+import { Employee } from "../../store/Store";
 
 const mockEmployees: Employee[] = [
   {

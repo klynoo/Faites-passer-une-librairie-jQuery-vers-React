@@ -1,12 +1,11 @@
 import React from "react";
 import styled from "styled-components";
+import { SortCriteria } from "../../hooks/useSortBy";
+import Dropdown from "npm-bk";
 import useEmployeeListLogic from "./EmployeeListLogic";
-import { SortCriteria } from "../hooks/useSortBy";
-import Dropdown from "./Dropdown";
 
 interface SortButtonProps {
   sortBy: SortCriteria;
-  label: string;
   onClick: (sortBy: SortCriteria) => void;
   currentSort: SortCriteria | null;
   sortOrder: "asc" | "desc";
@@ -86,7 +85,6 @@ const EmployeeList: React.FC = () => {
                   First Name
                   <SortButton
                     sortBy="firstName"
-                    label=""
                     onClick={handleSortChange}
                     currentSort={currentSort}
                     sortOrder={sortOrder}
@@ -99,7 +97,6 @@ const EmployeeList: React.FC = () => {
                   Last Name
                   <SortButton
                     sortBy="lastName"
-                    label=""
                     onClick={handleSortChange}
                     currentSort={currentSort}
                     sortOrder={sortOrder}
@@ -111,7 +108,6 @@ const EmployeeList: React.FC = () => {
                   Start Date
                   <SortButton
                     sortBy="startDate"
-                    label=""
                     onClick={handleSortChange}
                     currentSort={currentSort}
                     sortOrder={sortOrder}
@@ -123,7 +119,6 @@ const EmployeeList: React.FC = () => {
                   Department
                   <SortButton
                     sortBy="department"
-                    label=""
                     onClick={handleSortChange}
                     currentSort={currentSort}
                     sortOrder={sortOrder}
@@ -135,7 +130,6 @@ const EmployeeList: React.FC = () => {
                   Date of Birth
                   <SortButton
                     sortBy="dateOfBirth"
-                    label=""
                     onClick={handleSortChange}
                     currentSort={currentSort}
                     sortOrder={sortOrder}
@@ -147,7 +141,6 @@ const EmployeeList: React.FC = () => {
                   Street
                   <SortButton
                     sortBy="street"
-                    label=""
                     onClick={handleSortChange}
                     currentSort={currentSort}
                     sortOrder={sortOrder}
@@ -159,7 +152,6 @@ const EmployeeList: React.FC = () => {
                   City
                   <SortButton
                     sortBy="city"
-                    label=""
                     onClick={handleSortChange}
                     currentSort={currentSort}
                     sortOrder={sortOrder}
@@ -171,7 +163,6 @@ const EmployeeList: React.FC = () => {
                   State
                   <SortButton
                     sortBy="state"
-                    label=""
                     onClick={handleSortChange}
                     currentSort={currentSort}
                     sortOrder={sortOrder}
@@ -183,7 +174,6 @@ const EmployeeList: React.FC = () => {
                   Zip Code
                   <SortButton
                     sortBy="zipCode"
-                    label=""
                     onClick={handleSortChange}
                     currentSort={currentSort}
                     sortOrder={sortOrder}

@@ -1,6 +1,7 @@
 import { useState, useMemo, useEffect } from "react";
+import { Employee } from "../store/Store";
 
-function usePagination(data: any[]) {
+function usePagination(data: Employee[]) {
   const [itemsPerPage, setItemsPerPage] = useState(5);
 
   const [currentPage, setCurrentPage] = useState(1);

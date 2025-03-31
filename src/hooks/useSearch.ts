@@ -1,6 +1,7 @@
 import { useState, useMemo } from "react";
+import { Employee } from "../store/Store";
 
-function useSearch(employees: any[]) {
+function useSearch(employees: Employee[]) {
   const [searchTerm, setSearchTerm] = useState("");
 
   const filteredEmployees = useMemo(() => {
