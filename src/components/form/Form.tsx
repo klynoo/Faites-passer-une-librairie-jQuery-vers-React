@@ -2,30 +2,20 @@ import React, { useState } from "react";
 import styled from "styled-components";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-
 import Dropdown from "npm-bk";
 import COUNTRIES from "../../constants/countries";
 import DEPARTEMENTS from "../../constants/departements";
 import { useFormLogic, FormInputs } from "./useFormLogic";
 import useEmployeeStore from "../../store/Store";
 
-interface InputFieldProps {
+const InputField: React.FC<{
   label: string;
   type: string;
   name: string;
   value: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   error?: string | null;
-}
-
-const InputField: React.FC<InputFieldProps> = ({
-  label,
-  type,
-  name,
-  value,
-  onChange,
-  error,
-}) => (
+}> = ({ label, type, name, value, onChange, error }) => (
   <FieldContainer>
     <Label htmlFor={name}>{label}</Label>
     <Input
@@ -41,13 +31,15 @@ const InputField: React.FC<InputFieldProps> = ({
 );
 
 const Form: React.FC = () => {
-  const [success, setSuccess] = useState<boolean>(false);
+  const [success, setSuccess] = useState(false);
 
   const {
     formData,
-    date,
+    dateOfBirth,
+    startDate,
     errors,
-    setDate,
+    setDateOfBirth,
+    setStartDate,
     handleChange,
     handleDropdownChange,
     handleSubmit,
@@ -67,19 +59,16 @@ const Form: React.FC = () => {
     const newEmployee = {
       firstName: data.firstName,
       lastName: data.lastName,
-      startDate: new Date().toISOString().split("T")[0], // Date actuelle
+      startDate: new Date().toISOString().split("T")[0],
+      dateOfBirth: dateOfBirth ? dateOfBirth.toISOString().split("T")[0] : "",
       department: data.department,
-      dateOfBirth: date ? date.toISOString().split("T")[0] : "",
       street: data.street,
       city: data.city,
       state: data.state,
       zipCode: data.zipCode,
     };
-
     addEmployee(newEmployee);
-    console.log("Employé ajouté :", newEmployee);
     setSuccess(true);
-
     setTimeout(() => setSuccess(false), 3000);
   };
 
@@ -109,13 +98,27 @@ const Form: React.FC = () => {
         <FieldContainer>
           <Label>Date de naissance</Label>
           <DatePicker
-            selected={date}
-            onChange={setDate}
+            selected={dateOfBirth}
+            onChange={setDateOfBirth}
             dateFormat="yyyy-MM-dd"
             placeholderText="Sélectionnez une date"
             className="w-full px-4 py-2 bg-transparent focus:outline-none text-gray-700"
           />
-          {errors.date && <ErrorMessage>{errors.date}</ErrorMessage>}
+          {errors.dateOfBirth && (
+            <ErrorMessage>{errors.dateOfBirth}</ErrorMessage>
+          )}
+        </FieldContainer>
+
+        <FieldContainer>
+          <Label>Date de debut </Label>
+          <DatePicker
+            selected={startDate}
+            onChange={setStartDate}
+            dateFormat="yyyy-MM-dd"
+            placeholderText="Sélectionnez une date"
+            className="w-full px-4 py-2 bg-transparent focus:outline-none text-gray-700"
+          />
+          {errors.startDate && <ErrorMessage>{errors.startDate}</ErrorMessage>}
         </FieldContainer>
 
         <InputField
@@ -190,7 +193,6 @@ const Form: React.FC = () => {
 export default Form;
 
 const PageBackground = styled.div`
-  /* Large background, can be a gradient or solid color */
   min-height: 100vh;
   background: linear-gradient(120deg, #f0f0f0, #fafafa);
   display: flex;
@@ -207,7 +209,6 @@ const FormContainer = styled.form`
   padding: 24px;
   box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
 
-  /* Responsive design */
   @media (max-width: 500px) {
     max-width: 95%;
   }

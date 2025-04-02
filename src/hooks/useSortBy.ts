@@ -3,6 +3,7 @@ import { Employee } from "../store/Store";
 
 export type SortCriteria = keyof Employee;
 
+//objet de fonction
 const compareFunctions = {
   string: function (field: keyof Employee, isAscending: boolean) {
     return function (a: Employee, b: Employee) {

@@ -4,7 +4,8 @@ import { validationRules } from "./rulesForm";
 export interface FormInputs {
   firstName: string;
   lastName: string;
-  date: Date | null;
+  startDate: Date | null;
+  dateOfBirth: Date | null;
   street: string;
   city: string;
   state: string;
@@ -18,16 +19,23 @@ export interface ValidationRule {
   errorMessage: string;
 }
 
-export const useFormLogic = (initialState: Omit<FormInputs, "date">) => {
+export const useFormLogic = (
+  initialState: Omit<FormInputs, "startDate" | "dateOfBirth">
+) => {
+  // State pour les champs non-date
   const [formData, setFormData] =
-    useState<Omit<FormInputs, "date">>(initialState);
-  const [date, setDate] = useState<Date | null>(null);
+    useState<Omit<FormInputs, "startDate" | "dateOfBirth">>(initialState);
+
+  // States séparés pour les deux dates
+  const [startDate, setStartDate] = useState<Date | null>(null);
+  const [dateOfBirth, setDateOfBirth] = useState<Date | null>(null);
   const [errors, setErrors] = useState<
     Record<keyof FormInputs, string | undefined>
   >({
     firstName: undefined,
     lastName: undefined,
-    date: undefined,
+    startDate: undefined,
+    dateOfBirth: undefined,
     street: undefined,
     city: undefined,
     state: undefined,
@@ -52,7 +60,8 @@ export const useFormLogic = (initialState: Omit<FormInputs, "date">) => {
     const newErrors: Record<keyof FormInputs, string | undefined> = {
       firstName: undefined,
       lastName: undefined,
-      date: undefined,
+      startDate: undefined,
+      dateOfBirth: undefined,
       street: undefined,
       city: undefined,
       state: undefined,
@@ -61,9 +70,10 @@ export const useFormLogic = (initialState: Omit<FormInputs, "date">) => {
     };
 
     validationRules.forEach(({ field }) => {
-      if (field === "date") {
-        // Validation de la date (state local) séparément
-        newErrors.date = validateField(field, date);
+      if (field === "startDate") {
+        newErrors.startDate = validateField(field, startDate);
+      } else if (field === "dateOfBirth") {
+        newErrors.dateOfBirth = validateField(field, dateOfBirth);
       } else {
         newErrors[field] = validateField(field, formData[field]);
       }
@@ -90,13 +100,19 @@ export const useFormLogic = (initialState: Omit<FormInputs, "date">) => {
     }));
   };
 
-  const setDateWithValidation = (selectedDate: Date | null) => {
-    setDate(selectedDate);
-
-    // Valider immédiatement la date
+  const setStartDateWithValidation = (selectedDate: Date | null) => {
+    setStartDate(selectedDate);
     setErrors((prev) => ({
       ...prev,
-      date: validateField("date", selectedDate),
+      startDate: validateField("startDate", selectedDate),
+    }));
+  };
+
+  const setDateOfBirthWithValidation = (selectedDate: Date | null) => {
+    setDateOfBirth(selectedDate);
+    setErrors((prev) => ({
+      ...prev,
+      dateOfBirth: validateField("dateOfBirth", selectedDate),
     }));
   };
 
@@ -113,7 +129,7 @@ export const useFormLogic = (initialState: Omit<FormInputs, "date">) => {
       e.preventDefault();
       const newErrors = validateForm();
 
-      // Vérifie si des erreurs sont présentes
+      // Vérifie s'il y a au moins une erreur
       if (Object.values(newErrors).some((error) => error !== undefined)) {
         setErrors(newErrors);
       } else {
@@ -121,22 +137,29 @@ export const useFormLogic = (initialState: Omit<FormInputs, "date">) => {
         setErrors({
           firstName: undefined,
           lastName: undefined,
-          date: undefined,
+          startDate: undefined,
+          dateOfBirth: undefined,
           street: undefined,
           city: undefined,
           state: undefined,
           zipCode: undefined,
           department: undefined,
         });
-        onSuccess({ ...formData, date });
+        onSuccess({
+          ...formData,
+          startDate,
+          dateOfBirth,
+        });
       }
     };
 
   return {
     formData,
-    date,
+    startDate,
+    dateOfBirth,
     errors,
-    setDate: setDateWithValidation,
+    setStartDate: setStartDateWithValidation,
+    setDateOfBirth: setDateOfBirthWithValidation,
     handleChange,
     handleDropdownChange,
     handleSubmit,

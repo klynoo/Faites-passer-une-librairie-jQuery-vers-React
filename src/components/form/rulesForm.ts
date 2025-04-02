@@ -12,7 +12,12 @@ export const validationRules: ValidationRule[] = [
     errorMessage: "Le nom doit contenir au moins 2 caractères.",
   },
   {
-    field: "date",
+    field: "startDate",
+    validate: (value) => value instanceof Date && !isNaN(value.getTime()),
+    errorMessage: "La date est requise et doit être valide.",
+  },
+  {
+    field: "dateOfBirth",
     validate: (value) => value instanceof Date && !isNaN(value.getTime()),
     errorMessage: "La date est requise et doit être valide.",
   },
